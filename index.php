@@ -1,6 +1,7 @@
 <?php
 header("Last-Modified: ".gmdate("D, d M Y H:i:s", filemtime(__FILE__))." GMT");
 header("ETag: ".md5_file(__FILE__));
+include('settings.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,7 +39,7 @@ header("ETag: ".md5_file(__FILE__));
     <?php include("scripts.js"); ?>
   </script>
 </head>
-  
+
 <body>
 
 <div style="background-color: grey; margin: 0px -8px 12px -8px; padding: 8px; float: left; margin-right: auto;">
@@ -80,7 +81,7 @@ header("ETag: ".md5_file(__FILE__));
 
   <div style=" color: grey; font-size: 14px; margin-top: 30px;">
     <?php
-    $conn = new mysqli("localhost", "db_username", "db_password", "db_name");
+    $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
     $query = "SELECT name FROM phuxar15";
     $result = $conn->query($query);
     echo 'Totalt '.$result->num_rows.' phuxar i databasen'; ?>
@@ -123,16 +124,16 @@ else {
 
   //gamedata = window["games"][gamemode];
   console.log('Gamemode: '+gamemode);
-  
-  
+
+
 }
 
 
 
 //<![CDATA[
-var sc_project=7785329; 
-var sc_invisible=1; 
-var sc_security="581050b9"; 
+var sc_project=7785329;
+var sc_invisible=1;
+var sc_security="581050b9";
 var scJsHost = (("https:" == document.location.protocol) ?
 "https://secure." : "http://www.");
 document.write("<sc"+"ript type='text/javascript' src='" +

@@ -2,10 +2,11 @@
 Header("Content-type: text/plain; charset=utf-8");
 Header("X-Robots-Tag: noindex, nofollow");
 header("Access-Control-Allow-Origin: *");
+include('settings.php');
 
 if(!isset($_GET['mode'])) (die());
 
-$conn = new mysqli("localhost", "db_username", "db_password", "db_name");
+$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 $conn->set_charset("utf8");
 
 if($_GET['mode']=="all") { $query = "SELECT name,studies FROM phuxar15 ORDER BY RAND() LIMIT 12"; }

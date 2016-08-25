@@ -9,7 +9,7 @@ function setupGame() {
   shuffledGamedata = randomizer(gamedata);
   names = shuffledGamedata.names;
   imgsrc = shuffledGamedata.imgsrc;
-  pairs = shuffledGamedata.pairs
+  pairs = shuffledGamedata.pairs;
   pairs.forEach(function(entry) {
     entry[0] = entry[0]+'n';
     entry[1] = entry[1]+'i';
@@ -36,15 +36,15 @@ function setupGame() {
 
 
 function createNameTable() {
-  var table = document.createElement('table')
-    , tableBody = document.createElement('tbody');
-
+  var table = document.createElement('table');
+  var tableBody = document.createElement('tbody');
+  var row; var cell;
 
   for(i=0; i<tableRows-1; i++) {
-    var row = document.createElement('tr');
+    row = document.createElement('tr');
 
     for(j=0; j<tableCols; j++) {
-      var cell = document.createElement('td');
+      cell = document.createElement('td');
       cell.innerHTML = '<div class="container" id="'+(i*(tableCols)+j+1)+'nd">'+names[i*(tableCols)+j]+'</div>';
       cell.setAttribute("id", i*(tableCols)+j+1+"nt");
       row.appendChild(cell);
@@ -52,9 +52,9 @@ function createNameTable() {
     tableBody.appendChild(row);
   }
 
-  var row = document.createElement('tr');
+  row = document.createElement('tr');
   for(k=0; k<leftoverCols; k++) {
-    var cell = document.createElement('td');
+    cell = document.createElement('td');
     cell.innerHTML = '<div class="container" id="'+(tableCols*(tableRows-1)+k+1)+'nd">'+names[tableCols*(tableRows-1)+k]+'</div>';
     cell.setAttribute("id", tableCols*(tableRows-1)+k+1+"nt");
     row.appendChild(cell);
@@ -68,15 +68,15 @@ function createNameTable() {
 
 
 function createImageTable() {
-  var table = document.createElement('table')
-    , tableBody = document.createElement('tbody');
-
+  var table = document.createElement('table');
+  var tableBody = document.createElement('tbody');
+  var row; var cell;
 
   for(i=0; i<tableRows-1; i++) {
-    var row = document.createElement('tr');
+    row = document.createElement('tr');
 
     for(j=0; j<tableCols; j++) {
-      var cell = document.createElement('td');
+      cell = document.createElement('td');
       cell.innerHTML = '<div class="container" id="'+(i*(tableCols)+j+1)+'id"><img src="'+imgsrc[i*(tableCols)+j]+'" /></div>';
       cell.setAttribute("id", i*(tableCols)+j+1+'it');
       row.appendChild(cell);
@@ -84,9 +84,9 @@ function createImageTable() {
     tableBody.appendChild(row);
   }
 
-  var row = document.createElement('tr');
+  row = document.createElement('tr');
   for(k=0; k<leftoverCols; k++) {
-    var cell = document.createElement('td');
+    cell = document.createElement('td');
     //cell.appendChild(document.createTextNode(gamedata.imgsrc[tableCols*(tableRows-1)+k]));
     cell.innerHTML= '<div class="container" id="'+(tableCols*(tableRows-1)+k+1)+'id"><img src="'+imgsrc[tableCols*(tableRows-1)+k]+'" /></div>';
     cell.setAttribute("id", tableCols*(tableRows-1)+k+1+'it');
@@ -125,7 +125,7 @@ function registerClick(id) {
   else {
     openCards = [];
   }
-  
+
   // Make cards visible that are in openCards or matchedCards
   makeVisible("container");
   function makeVisible(matchClass) {
@@ -138,19 +138,20 @@ function registerClick(id) {
         document.getElementById(cards[i].id.slice(0,-1)+"d").style.visibility = 'hidden';
       }
 
-        
+
     }
 
     // Check if game is won
     if(matchedCards.length==cards.length) {
-      var score = 5000/time
-      console.log("You won! Score: "+score);
+      var score = 5000/time;
+      alert("Du vann! Poäng: "+score);
       var msg = {
         "messageType": "SCORE",
         "score": score
       };
       window.parent.postMessage(msg, "*");
     }
+
     console.log(matchedCards.length + "/" + cards.length );
   }
 
