@@ -3,7 +3,7 @@ var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 function setupGame() {
   console.log("Setting up a new game...");
   time=0;
-  setInterval(timer, 1000);
+  setInterval(function(){time++;}, 1000);
 
   // Shuffle data:
   shuffledGamedata = randomizer(gamedata);
@@ -143,16 +143,16 @@ function registerClick(id) {
 
     // Check if game is won
     if(matchedCards.length==cards.length) {
-      var score = 5000/time;
-      alert("Du vann! Poäng: "+score);
+      var score = Math.round(5000/time);
+      console.log("You won! Score: "+score);
       var msg = {
         "messageType": "SCORE",
         "score": score
       };
       window.parent.postMessage(msg, "*");
+      submitHighScore(score);
     }
 
-    console.log(matchedCards.length + "/" + cards.length );
   }
 
 }
@@ -222,6 +222,68 @@ function getUrlVars() {
   return vars;
 }
 
-function timer() {
-  time++;
+function submitHighScore(score) {
+  var name = prompt("Grattis, du fick "+score+" poäng!\nSkriv ditt namn till topplistan:");
+
+  if(name !== null) {
+    $.ajax({
+      method: "POST",
+      url: "highscore.php",
+      data: {
+        name: name,
+        highscore: score,
+        mode: gamemode
+      }
+    });
+  }
+
+  pushNotificationHandler(score,name);
+
+}
+
+function pushNotificationHandler(score,name) {
+  var endpoint;
+  var key;
+  var authSecret;
+
+  navigator.serviceWorker.register('service-worker.js')
+  .then(function(registration) {
+
+    return registration.pushManager.getSubscription()
+    .then(function(subscription) {
+      if (subscription) {
+        return subscription;
+      }
+
+      return registration.pushManager.subscribe({ userVisibleOnly: true });
+    });
+  }).then(function(subscription) {
+
+    var rawKey = subscription.getKey ? subscription.getKey('p256dh') : '';
+    key = rawKey ?
+          btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey))) :
+          '';
+    var rawAuthSecret = subscription.getKey ? subscription.getKey('auth') : '';
+    authSecret = rawAuthSecret ?
+                 btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret))) :
+                 '';
+
+    endpoint = subscription.endpoint;
+
+    $.ajax({
+      method: "POST",
+      url: "registerSubscriber.php",
+      data: {
+        endpoint: subscription.endpoint,
+        key: key,
+        authSecret: authSecret,
+        highscore: score,
+        name: name
+      }
+    }).done(function(){
+      console.log("Subscription registered to server");
+    });
+
+  });
+
 }

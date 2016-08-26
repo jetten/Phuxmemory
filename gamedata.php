@@ -1,7 +1,12 @@
 <?php
-Header("Content-type: text/plain; charset=utf-8");
+Header("Content-type: application/json; charset=utf-8");
 Header("X-Robots-Tag: noindex, nofollow");
 header("Access-Control-Allow-Origin: *");
+header('Expires: Sun, 01 Jan 2014 00:00:00 GMT');
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
 include('settings.php');
 
 if(!isset($_GET['mode'])) (die());

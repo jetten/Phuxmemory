@@ -1,6 +1,5 @@
 <?php
 header("Last-Modified: ".gmdate("D, d M Y H:i:s", filemtime(__FILE__))." GMT");
-header("ETag: ".md5_file(__FILE__));
 include('settings.php');
 ?>
 <!DOCTYPE html>
@@ -10,7 +9,7 @@ include('settings.php');
   <meta name="viewport" content="width=100%, initial-scale=1" />
   <meta charset="utf-8" />
   <title>Phuxmemory</title>
-
+  <link rel="manifest" href="manifest.json">
   <style>
     body {font-family: Arial;}
     tr {}
@@ -34,16 +33,14 @@ include('settings.php');
       #imageDiv{float: none;}
     }
   </style>
-  <script type="text/javascript" src="jquery-2.1.4.min.js"></script>
-  <script type="text/javascript">
-    <?php include("scripts.js"); ?>
-  </script>
+  <script type="text/javascript" src="jquery-3.1.0.min.js"></script>
+  <script type="text/javascript" src="scripts.js"></script>
 </head>
 
 <body>
 
 <div style="background-color: grey; margin: 0px -8px 12px -8px; padding: 8px; float: left; margin-right: auto;">
-  <a style="color: black; text-decoration: none;" href="."><b>Phuxmemory</b> by </a><a href="//jiihon.com/" target="_parent" style="color: black; text-decoration: none;">jiihon.com</a>
+  <a style="color: black; text-decoration: none;" href="."><b>Phuxmemory</b> by </a><a href="http://jiihon.com/" target="_parent" style="color: black; text-decoration: none;">jiihon.com</a>
 </div>
 <div style="background-color: grey; margin: -8px -8px 12px -8px; padding: 8px; text-align: right;">
   <a href="?p=all" id="all" class="clink">Alla</a>
@@ -111,8 +108,7 @@ if(gamemode === undefined) {
 }
 else {
   var gamedata = {id: gamemode} ;
-  $.get('gamedata.php?mode='+gamemode, function(data,status) {
-    var obj = JSON.parse(data);
+  $.get('gamedata.php?mode='+gamemode, function(obj,status) {
     var jnames = obj.names.split(',');
     var jimgsrc = obj.imgs.split(',');
     gamedata.names = jnames;
