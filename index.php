@@ -17,7 +17,7 @@ $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
     .card{ width: 150px; height: 130px; border: 1px solid; margin: 1px; overflow: hidden;}
     .namecard {float: right;}
     .imgcard {float: left;}
-    img {width: 150px; transform: scale(2); position: relative; top: 35px;}
+    img {width: 150px;}
 
     .wlink{color: black; text-decoration: none; margin-right: 25px;}
     .clink{margin-left: 16px; color: black; text-decoration: none;}
@@ -32,7 +32,7 @@ $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
     /* 3 cols does not fit */
     @media all and (max-width: 958px) {
       .card{width: 120px; height: 104px;}
-      img {width: 120px; transform: scale(2); position: relative; top: 25px;}
+      img {width: 120px;}
       #nameDiv{width: 49%; min-width: 248px;}
       #imageDiv{width: 49%; min-width: 248px;}
     }
@@ -40,21 +40,21 @@ $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
     @media all and (max-width: 775px) {
       body {font-size: 0.8em;}
       .card{width: 100px; height: 87px;}
-      img {width: 100px; transform: scale(2); position: relative; top: 23px;}
+      img {width: 100px;}
       #nameDiv{width: 49%; min-width: 207px;}
       #imageDiv{width: 49%; min-width: 207px;}
     }
 
     @media all and (max-width: 652px) {
       .card{width: 83px; height: 72px;}
-      img {width: 83px; transform: scale(2); position: relative; top: 19px;}
+      img {width: 83px}
       #nameDiv{width: 49%; min-width: 170px;}
       #imageDiv{width: 49%; min-width: 170px;}
     }
 
     @media all and (max-width: 371px) {
       .card{width: 75px; height: 65px;}
-      img {width: 75px; transform: scale(2); position: relative; top: 18px;}
+      img {width: 75px;}
       #nameDiv{width: 49%; min-width: 155px;}
       #imageDiv{width: 49%; min-width: 155px;}
     }
@@ -76,7 +76,9 @@ $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
   <a href="?p=bio" id="bio" class="clink">BIO</a>
   <a href="?p=chem" id="chem" class="clink">CHEM</a>
   <a href="?p=eny"  id="eny" class="clink">ENY</a>
+  <a href="?p=info"  id="info" class="clink">INFO</a>
   <a href="?p=kone" id="kone" class="clink">Kone</a>
+  <a href="?p=tuta" id="tuta" class="clink">Prodeko</a>
   <a href="?p=sik" id="sik" class="clink">SIK</a>
   <a href="?p=tfm" id="tfm" class="clink">TFM</a>
   <a href="?p=tik"  id="tik" class="clink">TiK</a>
@@ -97,9 +99,11 @@ $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
     <a class="wlink" href="?p=all">Alla linjer</a>
     <a class="wlink" href="?p=as">AS</a>
     <a class="wlink" href="?p=bio">BIO</a>
-    <a class="wlink" href="?p=chem">CHEM</a><br />
-    <a class="wlink" href="?p=eny">ENY</a>
+    <a class="wlink" href="?p=chem">CHEM</a>
+    <a class="wlink" href="?p=eny">ENY</a><br />
+    <a class="wlink" href="?p=info">INFO</a>
     <a class="wlink" href="?p=kone">Kone</a>
+    <a class="wlink" href="?p=tuta">Prodeko</a>
     <a class="wlink" href="?p=sik">SIK</a>
     <a class="wlink" href="?p=tfm">TFM</a>
     <a class="wlink" href="?p=tik">TiK</a>
@@ -108,7 +112,7 @@ $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 
   <div style=" color: grey; font-size: 14px; margin-top: 30px;">
     <?php
-    $query = "SELECT name FROM phuxar15";
+    $query = "SELECT name FROM phuxar16";
     $result = $conn->query($query);
     echo 'Totalt '.$result->num_rows.' phuxar i databasen'; ?>
   </div>

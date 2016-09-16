@@ -14,14 +14,14 @@ if(!isset($_GET['mode'])) (die());
 $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 $conn->set_charset("utf8");
 
-if($_GET['mode']=="all") { $query = "SELECT name,studies FROM phuxar15 ORDER BY RAND() LIMIT 12"; }
-else {$query = "SELECT name,studies FROM phuxar15 WHERE studies='".$_GET['mode']."'"; }
+if($_GET['mode']=="all") { $query = "SELECT name,studies FROM phuxar16 ORDER BY RAND() LIMIT 12"; }
+else {$query = "SELECT name,studies FROM phuxar16 WHERE studies='".$_GET['mode']."'"; }
 
 $result = $conn->query($query);
 
 while($row = $result->fetch_assoc()) {
 	$names[] = $row["name"];
-	$imgsrc[] = $row['studies'].'/'.$row['name'].'.jpg';
+	$imgsrc[] = 'phux16/'.$row['studies'].'/'.$row['name'].'.jpg';
 }
 
 
