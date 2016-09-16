@@ -1,6 +1,7 @@
 <?php
 header("Last-Modified: ".gmdate("D, d M Y H:i:s", filemtime(__FILE__))." GMT");
 include('settings.php');
+$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,28 +13,55 @@ include('settings.php');
   <link rel="manifest" href="manifest.json">
   <style>
     body {font-family: Arial;}
-    tr {}
-    td {min-width: 150px; max-width: 150px; height: 130px; border: 1px solid; margin: -2px; overflow: hidden;}
-    table {text-align: center;}
-    .container{visibility: hidden;}
+    .container{visibility: hidden; text-align: center; display: flex; align-items: center; justify-content: center;}
+    .card{ width: 150px; height: 130px; border: 1px solid; margin: 1px; overflow: hidden;}
+    .namecard {float: right;}
+    .imgcard {float: left;}
     img {width: 150px; transform: scale(2); position: relative; top: 35px;}
 
     .wlink{color: black; text-decoration: none; margin-right: 25px;}
     .clink{margin-left: 16px; color: black; text-decoration: none;}
     .clink-selected{background-color: white; padding: 3px 6px 2px 6px;}
 
-    #nameDiv{width: 50%; min-width: 450px; float: left;}
-    #nameTable{margin-left: auto; margin-right: 30px;}
-    #imageDiv{width: 50%; min-width: 450px; float: right;}
-    #imageTable{margin-right: auto; margin-left: 30px;}
+    #nameDiv .container {height: 100%} /* Center text vertically */
 
-    @media all and (max-width: 950px) {
-      #nameDiv {float: none;}
-      #imageTable {margin-left: 0px; margin-top: 10px;}
-      #imageDiv{float: none;}
+    #gameDiv{max-width: 1300px; margin: auto;} /* No more than 4 rows */
+    #nameDiv{width: 49%; min-width: 310px; float: left;}
+    #imageDiv{width: 49%; min-width: 310px; float: right;}
+
+    /* 3 cols does not fit */
+    @media all and (max-width: 958px) {
+      .card{width: 120px; height: 104px;}
+      img {width: 120px; transform: scale(2); position: relative; top: 25px;}
+      #nameDiv{width: 49%; min-width: 248px;}
+      #imageDiv{width: 49%; min-width: 248px;}
     }
+
+    @media all and (max-width: 775px) {
+      body {font-size: 0.8em;}
+      .card{width: 100px; height: 87px;}
+      img {width: 100px; transform: scale(2); position: relative; top: 23px;}
+      #nameDiv{width: 49%; min-width: 207px;}
+      #imageDiv{width: 49%; min-width: 207px;}
+    }
+
+    @media all and (max-width: 652px) {
+      .card{width: 83px; height: 72px;}
+      img {width: 83px; transform: scale(2); position: relative; top: 19px;}
+      #nameDiv{width: 49%; min-width: 170px;}
+      #imageDiv{width: 49%; min-width: 170px;}
+    }
+
+    @media all and (max-width: 371px) {
+      .card{width: 75px; height: 65px;}
+      img {width: 75px; transform: scale(2); position: relative; top: 18px;}
+      #nameDiv{width: 49%; min-width: 155px;}
+      #imageDiv{width: 49%; min-width: 155px;}
+    }
+
   </style>
   <script type="text/javascript" src="jquery-3.1.0.min.js"></script>
+  <script type="text/javascript" src="js.cookie.js"></script>
   <script type="text/javascript" src="scripts.js"></script>
 </head>
 
@@ -54,12 +82,14 @@ include('settings.php');
   <a href="?p=tik"  id="tik" class="clink">TiK</a>
 </div>
 
+<div id="gameDiv">
+  <div id="nameDiv"></div>
+  <div id="imageDiv"></div>
+</div>
 
-<div id="nameDiv"></div>
-<div id="imageDiv"></div>
+<div id="highscore" style="text-align: center; padding-top: 14px; clear: both;"></div>
 
-
-<div id="welcomescreen" style="display: none; text-align: center; margin-top: 100px; font-size: 38px;">
+<div id="welcomescreen" style="display: none; text-align: center; margin-top: 100px; font-size: 2.6em;">
   <div style="">
     Vill du lära dig namnen på phuxar från
   </div>
@@ -78,13 +108,15 @@ include('settings.php');
 
   <div style=" color: grey; font-size: 14px; margin-top: 30px;">
     <?php
-    $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
     $query = "SELECT name FROM phuxar15";
     $result = $conn->query($query);
     echo 'Totalt '.$result->num_rows.' phuxar i databasen'; ?>
   </div>
 </div>
 
+<div id="pushNotificationInfo" style="display: none; position: fixed; top: 30px; bottom: 0px; left: 0px; right: 0px; background-color: white; text-align: center; align-items: center; justify-content: center; font-size: 1.2em;">
+  Tillåt notifikationer för att få reda på om någon slår ditt highscore!
+</div>
 
 
 <script type="text/javascript">
@@ -108,7 +140,7 @@ if(gamemode === undefined) {
 }
 else {
   var gamedata = {id: gamemode} ;
-  $.get('gamedata.php?mode='+gamemode, function(obj,status) {
+  $.get('gamedata.php?mode='+gamemode, function(obj) {
     var jnames = obj.names.split(',');
     var jimgsrc = obj.imgs.split(',');
     gamedata.names = jnames;
@@ -117,8 +149,11 @@ else {
     setupGame();
   });
 
+  $.get('highscore.php?mode='+gamemode, function(data) {
+    $("#highscore").html(data);
+  });
 
-  //gamedata = window["games"][gamemode];
+  //gamedata = window["games"][gamemode]
   console.log('Gamemode: '+gamemode);
 
 

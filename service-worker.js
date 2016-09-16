@@ -1,9 +1,11 @@
 self.addEventListener('push', function(event) {
 
+
+
   var payload = event.data.json();
   event.waitUntil(self.registration.showNotification(payload.title, {
       body: payload.body,
-      requireInteraction: true,
+      requireInteraction: isPersistent(payload.persistent),
       silent: true,
       data: payload.url
     })
@@ -22,3 +24,11 @@ self.addEventListener('notificationclick', function(event) {
       })
     );
 });
+
+function isPersistent(payloadPesistentString) {
+  if(payloadPesistentString === "true") {
+    return true;
+  } else {
+    return false;
+  }
+}

@@ -1,9 +1,8 @@
 var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 
 function setupGame() {
-  console.log("Setting up a new game...");
-  time=0;
-  setInterval(function(){time++;}, 1000);
+  time=0; clicks=0;
+  setInterval(function(){time++;}, 100);
 
   // Shuffle data:
   shuffledGamedata = randomizer(gamedata);
@@ -16,87 +15,27 @@ function setupGame() {
   });
 
 
-  if(width>=1260 || width <= 952 ) {tableCols = 4;}
-  else {tableCols = 3;}
-  tableRows = Math.ceil(gamedata.names.length/tableCols);
-  leftoverCols = gamedata.names.length - (tableRows-1)*(tableCols);
-
   createNameTable();
   createImageTable();
 
   setupListeners();
 
-  // Tables are created, now we can append it into the div's above
-  document.getElementById("nameDiv").appendChild(document.getElementById("nameTable"));
-  document.getElementById("imageDiv").appendChild(document.getElementById("imageTable"));
-
+  // Highlight selected page in menu
   document.getElementById(gamemode).className += ' clink-selected';
 
 }
 
 
 function createNameTable() {
-  var table = document.createElement('table');
-  var tableBody = document.createElement('tbody');
-  var row; var cell;
-
-  for(i=0; i<tableRows-1; i++) {
-    row = document.createElement('tr');
-
-    for(j=0; j<tableCols; j++) {
-      cell = document.createElement('td');
-      cell.innerHTML = '<div class="container" id="'+(i*(tableCols)+j+1)+'nd">'+names[i*(tableCols)+j]+'</div>';
-      cell.setAttribute("id", i*(tableCols)+j+1+"nt");
-      row.appendChild(cell);
-    }
-    tableBody.appendChild(row);
+  for(i=0; i<gamedata.names.length; i++) {
+    $("#nameDiv").append('<div class="card namecard" id="'+(i+1)+'nt"><div class="container" id="'+(i+1)+'nd">'+names[i]+'</div></div>');
   }
-
-  row = document.createElement('tr');
-  for(k=0; k<leftoverCols; k++) {
-    cell = document.createElement('td');
-    cell.innerHTML = '<div class="container" id="'+(tableCols*(tableRows-1)+k+1)+'nd">'+names[tableCols*(tableRows-1)+k]+'</div>';
-    cell.setAttribute("id", tableCols*(tableRows-1)+k+1+"nt");
-    row.appendChild(cell);
-  }
-  tableBody.appendChild(row);
-
-  table.appendChild(tableBody);
-  table.setAttribute("id", "nameTable");
-  document.body.appendChild(table);
 }
 
-
 function createImageTable() {
-  var table = document.createElement('table');
-  var tableBody = document.createElement('tbody');
-  var row; var cell;
-
-  for(i=0; i<tableRows-1; i++) {
-    row = document.createElement('tr');
-
-    for(j=0; j<tableCols; j++) {
-      cell = document.createElement('td');
-      cell.innerHTML = '<div class="container" id="'+(i*(tableCols)+j+1)+'id"><img src="'+imgsrc[i*(tableCols)+j]+'" /></div>';
-      cell.setAttribute("id", i*(tableCols)+j+1+'it');
-      row.appendChild(cell);
-    }
-    tableBody.appendChild(row);
+  for(i=0; i<gamedata.imgsrc.length; i++) {
+      $("#imageDiv").append('<div class="card imgcard" id="'+(i+1)+'it"><img class="container" id="'+(i+1)+'id" src="'+imgsrc[i]+'" /></div>')
   }
-
-  row = document.createElement('tr');
-  for(k=0; k<leftoverCols; k++) {
-    cell = document.createElement('td');
-    //cell.appendChild(document.createTextNode(gamedata.imgsrc[tableCols*(tableRows-1)+k]));
-    cell.innerHTML= '<div class="container" id="'+(tableCols*(tableRows-1)+k+1)+'id"><img src="'+imgsrc[tableCols*(tableRows-1)+k]+'" /></div>';
-    cell.setAttribute("id", tableCols*(tableRows-1)+k+1+'it');
-    row.appendChild(cell);
-  }
-  tableBody.appendChild(row);
-
-  table.appendChild(tableBody);
-  table.setAttribute("id", "imageTable");
-  document.body.appendChild(table);
 }
 
 
@@ -108,6 +47,11 @@ function setupListeners() {
 }
 
 function registerClick(id) {
+  // First click starts timer
+  if(clicks===0) time = 0;
+  // penalty for every click:
+  clicks++;
+
   if(openCards.length<2) {
     openCards.push(id.slice(0,-1));
 
@@ -143,7 +87,7 @@ function registerClick(id) {
 
     // Check if game is won
     if(matchedCards.length==cards.length) {
-      var score = Math.round(5000/time);
+      var score = Math.round(200000/(time+clicks*10));
       console.log("You won! Score: "+score);
       var msg = {
         "messageType": "SCORE",
@@ -223,20 +167,24 @@ function getUrlVars() {
 }
 
 function submitHighScore(score) {
-  var name = prompt("Grattis, du fick "+score+" poäng!\nSkriv ditt namn till topplistan:");
+  var name=Cookies.get('nickname');
+  if(name === undefined) {name="";}
+  var name = prompt("Grattis, du fick "+score+" poäng!\nSkriv ditt namn till topplistan:",name);
 
   if(name !== null) {
+    Cookies.set('nickname', name, {expires: 30});
     $.ajax({
       method: "POST",
       url: "highscore.php",
       data: {
         name: name,
         highscore: score,
-        mode: gamemode
+        gamemode: gamemode
       }
+    }).done(function(msg){
+      console.log(msg);
     });
   }
-
   pushNotificationHandler(score,name);
 
 }
@@ -245,6 +193,8 @@ function pushNotificationHandler(score,name) {
   var endpoint;
   var key;
   var authSecret;
+
+  document.getElementById('pushNotificationInfo').style.display = 'flex';
 
   navigator.serviceWorker.register('service-worker.js')
   .then(function(registration) {
@@ -278,10 +228,12 @@ function pushNotificationHandler(score,name) {
         key: key,
         authSecret: authSecret,
         highscore: score,
-        name: name
+        name: name,
+        gamemode: gamemode,
       }
-    }).done(function(){
-      console.log("Subscription registered to server");
+    }).done(function(msg){
+      console.log(msg);
+      document.getElementById('pushNotificationInfo').style.display = 'none';
     });
 
   });
